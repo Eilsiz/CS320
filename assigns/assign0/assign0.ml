@@ -17,24 +17,21 @@ evaluation of fact(N) in OCaml yields an Overflow
 exception.
 *)
 
-let rec fact x =
+let rec fact (x :int) =
   if x > 0 then
     x * fact (x - 1)
   else
     1
 
-let rec find_overflow n =
-  try
-    let _ = fact n in
-    find_overflow (n + 1)
-  with
-  | _ -> n
+let rec find_overflow (y :int): int =
+  if fact(y) = 0 then
+   y 
+  else
+      find_overflow (y + 1)
 
-let () =
-  let n = find_overflow 1 in
-  Printf.printf "The first N for which fact(N) causes an Overflow exception is: %d\n" n
+  (*Printf.printf "The first N for which fact(N) causes an Overflow exception is: %d\n" ;;*)
 
-(*result is N = 21*)
+(*result is N = 64*)
 (* ****** ****** *)
 
 (*
@@ -44,7 +41,7 @@ given natural number is a prime:
 fun isPrime(n0: int): bool
 *)
 
-let is_prime n0 =
+let is_prime (n0:int) :bool  =
   if n0 <= 1 then
     false
   else if n0 <= 3 then
@@ -52,15 +49,14 @@ let is_prime n0 =
   else if n0 mod 2 = 0 || n0 mod 3 = 0 then
     false
   else
-    let rec is_prime_helper n i =
-      if i * i > n then
+    let rec is_prime_helper (n, i) : bool  =
+      if i >= n then
         true
       else if n mod i = 0 then
         false
       else
-        is_prime_helper n (i + 2)
-    in
-    is_prime_helper n0 5
+        is_prime_helper (n, (i + 2)) in
+    is_prime_helper (n0, 5 )
 
 
 (* ****** ****** *)

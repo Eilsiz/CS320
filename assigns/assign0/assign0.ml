@@ -41,23 +41,13 @@ given natural number is a prime:
 fun isPrime(n0: int): bool
 *)
 
-let is_prime (n0:int) :bool  =
-  if n0 <= 1 then
-    false
-  else if n0 <= 3 then
-    true
-  else if n0 mod 2 = 0 || n0 mod 3 = 0 then
-    false
-  else
-    let rec is_prime_helper (n, i) : bool  =
-      if i >= n then
-        true
-      else if n mod i = 0 then
-        false
-      else
-        is_prime_helper (n, (i + 2)) in
-    is_prime_helper (n0, 5 )
-
+let isPrime (n0:int) : bool =
+  let rec isPrimeHelper n0 i =
+    if i = 1 then true
+    else if n0 mod i = 0 then false
+    else isPrimeHelper n0 (i-1)
+  in
+  isPrimeHelper n0 (n0-1)
 
 (* ****** ****** *)
 
@@ -67,9 +57,24 @@ Please implement a function that converts a given
 integer to a string that represents the integer:
 fun int2str(i0: int): string
 *)
+(* ****** ****** *)
+let chr = Char.chr
+let ord = Char.code
+let str(c0) = String.make 1 c0
+;;
+(* ****** ****** *)
 
-let int2str i0 =
-  string_of_int i0
+let int2str (i0: int): string =
+  let rec int2str_helper i result =
+    if i = 0 then
+      if result = "" then "0" else result
+    else
+      let digit = i mod 10 in
+      let digit_char = chr (digit + ord '0') in
+      let new_result = str (digit_char) ^ result in
+      int2str_helper (i / 10) new_result
+  in
+  int2str_helper i0 ""
 
 
 (* ****** ****** *)
@@ -82,7 +87,24 @@ fun str2int(cs: string): int
 In particular, it is expected that str2int(int2str(x)) = x
 *)
 
-let str2int cs = int_of_string cs
+(* ****** ****** *)
+let string_init = String.init
+let string_length = String.length
+let string_get(cs, i0) = String.get cs i0
+;;
+(* ****** ****** *)
+
+let str2int (cs: string): int =
+  let rec str2int_helper cs index result =
+    if index < 0 then
+      result
+    else
+      let digit_char = string_get (cs, index) in
+      let digit_value = ord digit_char - ord '0' in
+      let new_result = result + digit_value * int_of_float (10. ** float_of_int (string_length cs - 1 - index)) in
+      str2int_helper cs (index - 1) new_result
+  in
+  str2int_helper cs (string_length cs - 1) 0;;
 
 (* ****** ****** *)
 
@@ -94,12 +116,13 @@ fun stringrev(cs: string): string
 *)
 
 
-let rec string_rev cs =
-  match cs with
-  | "" -> ""
-  | _ -> (String.sub cs (String.length cs - 1) 1) ^ string_rev (String.sub cs 0 (String.length cs - 1))
+let string_rev cs =
+  let len = string_length cs in
+  let result = string_init len (fun i -> string_get(cs, len - 1 - i)) in
+  result;;
 
 
 (* ****** ****** *)
 
 (* end of [CS320-2023-Fall-assign0.ml] *)
+

@@ -87,6 +87,7 @@ In particular, it is expected that str2int(int2str(x)) = x
 *)
 
 (* ****** ****** *)
+(*let ord = Char.code*)
 let string_init = String.init
 let string_length = String.length
 let string_get(cs, i0) = String.get cs i0
@@ -95,15 +96,16 @@ let string_get(cs, i0) = String.get cs i0
 
 let str2int (cs: string): int =
   let rec str2int_helper cs index result =
-    if index < 0 then
+    if index >= (string_length cs) then
       result
     else
-      let digit_char = string_get (cs, index) in
-      let digit_value = ord digit_char - ord '0' in
-      let new_result = result + digit_value * int_of_float (10. ** float_of_int (string_length cs - 1 - index)) in
-      str2int_helper cs (index - 1) new_result
+      let digit = string_get(cs, index) in
+      let digit_int = ord digit - ord '0' in  
+      let new_result = (10 * result) + digit_int in
+      str2int_helper cs (index + 1) new_result
   in
-  str2int_helper cs (string_length cs - 1) 0;;
+  str2int_helper cs 0 0;;
+    
 
 (* ****** ****** *)
 
@@ -115,7 +117,7 @@ fun stringrev(cs: string): string
 *)
 
 
-let string_rev cs =
+let string_rev (cs: string): string =
   let len = string_length cs in
   let result = string_init len (fun i -> string_get(cs, len - 1 - i)) in
   result;;
